@@ -3,3 +3,14 @@ FROM pkp/ojs:latest
 # Añade tus propios ajustes sin tocar el código fuente
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+# …lo que ya tienes arriba…
+
+# Asegúrate de traer pkp-lib ANTES de npm build
+WORKDIR /app        # o /var/www/html según tu imagen
+RUN rm -rf lib/pkp && mkdir -p lib \
+ && git clone --depth=1 --branch 3.6.0 https://github.com/pkp/pkp-lib.git lib/pkp \
+ && test -f lib/pkp/tools/i18nExtractKeys.vite.js || (echo "❌ Falta i18nExtractKeys.vite.js" && exit 1)
+
+# Node LTS coherente
+RUN apk add --no-cache nodejs npm  # (o la forma de tu base)
+RUN npm ci && npm run build
