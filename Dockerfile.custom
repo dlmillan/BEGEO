@@ -1,0 +1,5 @@
+FROM pkp/ojs:latest
+
+# Añade tus propios ajustes sin tocar el código fuente
+COPY php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY nginx.conf /etc/nginx/conf.d/default.conf
